@@ -5,7 +5,7 @@ const rawData = fs.readFileSync('./questions.json');
 const questions = JSON.parse(rawData);
 
 // Chỉ lấy các bài C1, C2, C3 và C15
-const allowedLessons = ['C1', 'C2', 'C3', 'C15'];
+const allowedLessons = ['C1', 'C2', 'C15'];
 const filteredQuestions = questions.filter(q => allowedLessons.includes(q.lesson));
 
 // Clean the questions
