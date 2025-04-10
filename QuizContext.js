@@ -12,46 +12,59 @@ export const QuizProvider = ({ children }) => {
   const [userAnswers, setUserAnswers] = useState({});
   const [quizStarted, setQuizStarted] = useState(false);
   const [quizSubmitted, setQuizSubmitted] = useState(false);
-  const [availableLessons, setAvailableLessons] = useState([]);
   const [quizHistory, setQuizHistory] = useState([]);
   const [timeSpent, setTimeSpent] = useState(0);
   const [timerActive, setTimerActive] = useState(false);
-  
-  // Load questions and extract available lessons
+
+  // Load questions on component mount
   useEffect(() => {
     // Clean the questions data
     const cleanedQuestions = questionsData.map(q => {
       // Clean options - remove separator lines
       const cleanOptions = {};
-      for (const [key, value] of Object.entries(q.options)) {
-        cleanOptions[key] = value.replace(/\s*-{5,}\s*.*$/g, '').trim();
+      for (const [key, value] of Object.entries(q.options || {})) {
+        if (value) {
+          cleanOptions[key] = value.replace(/\s*-{5,}\s*.*$/g, '').trim();
+        }
       }
 
       // Complete truncated questions
-      const question = q.question.endsWith(':') || 
+      const question = !q.question ? '' : 
+                    q.question.endsWith(':') || 
                     q.question.endsWith('.') || 
                     q.question.endsWith('?') ? 
                     q.question : 
                     q.question + "...";
 
+      // Ensure lesson is a string and has proper format
+      const lesson = q.lesson && typeof q.lesson === 'string' ? q.lesson.trim() : '';
+
       return {
         ...q,
         question,
-        options: cleanOptions
+        options: cleanOptions,
+        lesson
       };
     });
     
-    setAllQuestions(cleanedQuestions);
+    // Filter out questions with invalid lessons
+    const validQuestions = cleanedQuestions.filter(q => q.lesson && q.lesson.match(/^C\d+$/));
     
-    // Extract unique lesson names from all lessons
-    const lessons = [...new Set(cleanedQuestions.map(q => q.lesson))].sort();
-    setAvailableLessons(lessons);
+    setAllQuestions(validQuestions);
     
     // Load quiz history from localStorage
     const savedHistory = localStorage.getItem('quizHistory');
     if (savedHistory) {
-      setQuizHistory(JSON.parse(savedHistory));
+      try {
+        setQuizHistory(JSON.parse(savedHistory));
+      } catch (e) {
+        console.error("Error loading quiz history:", e);
+      }
     }
+    
+    // Log available lessons to console for debugging
+    const availableLessons = [...new Set(validQuestions.map(q => q.lesson))].sort();
+    console.log("Available lessons:", availableLessons);
   }, []);
   
   // Timer for tracking time spent on quiz
@@ -71,13 +84,27 @@ export const QuizProvider = ({ children }) => {
   const startQuiz = () => {
     // Filter questions by selected lessons
     let filteredQuestions = allQuestions;
+    
     if (selectedLessons.length > 0) {
-      filteredQuestions = allQuestions.filter(q => selectedLessons.includes(q.lesson));
+      filteredQuestions = allQuestions.filter(q => {
+        // Ensure both the lesson and selectedLessons items are properly formatted
+        return q.lesson && selectedLessons.includes(q.lesson);
+      });
+      
+      // If no questions match the selected lessons, use all questions
+      if (filteredQuestions.length === 0) {
+        console.warn("No questions found for selected lessons. Using all questions instead.");
+        filteredQuestions = allQuestions;
+      }
     }
     
     // Shuffle and limit to questionCount
     const shuffled = [...filteredQuestions].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, questionCount);
+    
+    // Handle the case when questionCount is Infinity or exceeds available questions
+    const selected = questionCount === Infinity || questionCount >= shuffled.length 
+      ? shuffled 
+      : shuffled.slice(0, questionCount);
     
     setQuizQuestions(selected);
     setCurrentQuestionIndex(0);
@@ -188,9 +215,7 @@ export const QuizProvider = ({ children }) => {
   return (
     <QuizContext.Provider
       value={{
-        availableLessons,
         selectedLessons,
-        setSelectedLessons,
         toggleLesson,
         questionCount,
         setQuestionCount,

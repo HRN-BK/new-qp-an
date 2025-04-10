@@ -36,65 +36,38 @@ const Quiz = () => {
   const userAnswer = userAnswers[currentQuestionIndex];
   const isAnswered = userAnswer !== undefined;
   
-  // Calculate progress
-  const answeredCount = Object.keys(userAnswers).length;
-  const progress = Math.round((answeredCount / quizQuestions.length) * 100);
-  
   const handleSubmit = () => {
-    if (answeredCount === 0) {
-      alert('Vui lòng trả lời ít nhất một câu hỏi trước khi nộp bài.');
-      return;
-    }
-    
-    if (answeredCount < quizQuestions.length) {
-      const confirmSubmit = window.confirm(`Bạn chỉ mới trả lời ${answeredCount} trên ${quizQuestions.length} câu hỏi. Bạn có chắc muốn nộp bài không?`);
-      if (!confirmSubmit) return;
-    }
-    
     submitQuiz();
     navigate('/results');
   };
   
   const handleBackToHome = () => {
-    if (window.confirm('Bạn có chắc muốn quay lại trang chủ? Mọi câu trả lời sẽ bị mất.')) {
-      resetQuiz();
-      navigate('/');
-    }
+    resetQuiz();
+    navigate('/');
   };
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <div className="card max-w-3xl mx-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-medium">Câu hỏi {currentQuestionIndex + 1} / {quizQuestions.length}</h2>
+      <div className="card max-w-2xl mx-auto">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+          <h2 className="text-lg font-medium">Question {currentQuestionIndex + 1} of {quizQuestions.length}</h2>
           
-          <div className="flex items-center">
-            <div className="text-sm bg-primary-light/20 dark:bg-primary-dark/30 text-primary-dark dark:text-primary-light px-3 py-1 rounded-full mr-2">
-              Bài {currentQuestion.lesson}
-            </div>
-            
-            <div className="text-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+          <div className="flex items-center gap-2">
+            <div className="text-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full">
               {formatTime(timeSpent)}
             </div>
+            {currentQuestion.lesson && (
+              <div className="text-sm bg-primary-light/20 dark:bg-primary-dark/30 text-primary-dark dark:text-primary-light px-3 py-1 rounded-full">
+                Lesson {currentQuestion.lesson}
+              </div>
+            )}
           </div>
         </div>
         
-        <div className="flex justify-between items-center mb-4 text-sm">
-          <div>
-            Đã trả lời: <span className="font-medium">{answeredCount}/{quizQuestions.length}</span>
-          </div>
-          <div>
-            Hoàn thành: <span className="font-medium">{progress}%</span>
-          </div>
-        </div>
-        
-        <div className="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full mb-6">
+        <div className="h-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full mb-6">
           <div 
-            className="h-2 bg-primary-light dark:bg-primary-dark rounded-full transition-all duration-300" 
-            style={{ width: `${progress}%` }}
+            className="h-1 bg-primary-light dark:bg-primary-dark rounded-full" 
+            style={{ width: `${((currentQuestionIndex + 1) / quizQuestions.length) * 100}%` }}
           ></div>
         </div>
         
@@ -102,7 +75,9 @@ const Quiz = () => {
           <h3 className="text-xl font-semibold mb-6">{currentQuestion.question}</h3>
           
           <div className="space-y-3">
-            {Object.entries(currentQuestion.options).map(([key, value]) => {
+            {Object.entries(currentQuestion.options || {}).map(([key, value]) => {
+              if (!value) return null;
+              
               let optionClasses = "option-card border-gray-300 dark:border-gray-600 hover:border-primary-light dark:hover:border-primary-dark";
               
               // If this option has been selected or feedback is being shown
@@ -136,13 +111,13 @@ const Quiz = () => {
           </div>
         </div>
         
-        <div className="flex flex-wrap gap-2 justify-between">
-          <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2 justify-between">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={handleBackToHome}
               className="btn bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
             >
-              Trang chủ
+              Home
             </button>
             
             <button
@@ -154,7 +129,7 @@ const Quiz = () => {
                   : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600'
               }`}
             >
-              Trước
+              Previous
             </button>
             
             <button
@@ -166,15 +141,15 @@ const Quiz = () => {
                   : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600'
               }`}
             >
-              Tiếp
+              Next
             </button>
           </div>
           
           <button
             onClick={handleSubmit}
-            className="btn btn-secondary"
+            className="btn btn-secondary mt-2 sm:mt-0"
           >
-            Nộp bài
+            Submit Quiz
           </button>
         </div>
       </div>

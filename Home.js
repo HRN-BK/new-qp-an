@@ -1,38 +1,16 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QuizContext } from './QuizContext';
 
-// Mở rộng thông tin cho tất cả các bài học
-const lessonDescriptions = {
-  'C1': 'Đối tượng và phương pháp nghiên cứu môn học giáo dục QP-AN',
-  'C2': 'Chiến tranh quân đội và bảo vệ tổ quốc',
-  'C3': 'Quản lý nhà nước về quốc phòng an ninh',
-  'C4': 'Lực lượng vũ trang nhân dân Việt Nam',
-  'C5': 'Kết hợp phát triển kinh tế với tăng cường QP-AN',
-  'C6': 'Nghệ thuật quân sự Việt Nam',
-  'C7': 'Biểu tượng quốc gia và truyền thống quân sự',
-  'C8': 'Chiến lược quốc phòng trong thời đại mới',
-  'C9': 'Quân sự chung',
-  'C10': 'Kỹ thuật bắn súng',
-  'C11': 'Chiến thuật cá nhân',
-  'C12': 'Động tác đội ngũ',
-  'C13': 'Đọc bản đồ quân sự',
-  'C14': 'Cấp cứu ban đầu',
-  'C15': 'Kỹ năng quân sự chung'
-};
-
 const Home = () => {
   const {
-    availableLessons,
     selectedLessons,
-    setSelectedLessons,
     toggleLesson,
     questionCount,
     setQuestionCount,
     startQuiz
   } = useContext(QuizContext);
   
-  const [activeTab, setActiveTab] = useState('lessons'); // 'lessons' or 'settings'
   const navigate = useNavigate();
 
   const handleStartQuiz = () => {
@@ -40,137 +18,99 @@ const Home = () => {
     navigate('/quiz');
   };
 
-  // Group lessons (C1-C15) for better organization
-  const groupedLessons = availableLessons.reduce((groups, lesson) => {
-    if (lesson.startsWith('C')) {
-      groups.push(lesson);
-    }
-    return groups;
-  }, []).sort();
+  // Create array of lesson objects with code and title
+  const lessons = [
+    { code: 'C1', title: 'Một số quan điểm cơ bản của chủ nghĩa Mác – Lênin, tư tưởng Hồ Chí Minh về bảo vệ Tổ quốc' },
+    { code: 'C2', title: 'Đường lối, quan điểm của Đảng, chính sách pháp luật của Nhà nước về quốc phòng, an ninh' },
+    { code: 'C3', title: 'Xây dựng nền quốc phòng toàn dân và an ninh nhân dân' },
+    { code: 'C4', title: 'Xây dựng lực lượng vũ trang nhân dân Việt Nam' },
+    { code: 'C5', title: 'Kết hợp phát triển kinh tế – xã hội với tăng cường quốc phòng, an ninh' },
+    { code: 'C6', title: 'Bảo vệ an ninh quốc gia và giữ gìn trật tự an toàn xã hội' },
+    { code: 'C7', title: 'Nghệ thuật quân sự Việt Nam và truyền thống đánh giặc giữ nước của dân tộc' },
+    { code: 'C8', title: 'Phòng, chống chiến lược "Diễn biến hòa bình", bạo loạn lật đổ của các thế lực thù địch' },
+    { code: 'C9', title: 'Xây dựng phong trào toàn dân bảo vệ an ninh Tổ quốc' },
+    { code: 'C10', title: 'Một số vấn đề cơ bản về dân quân tự vệ, dự bị động viên' },
+    { code: 'C11', title: 'Biên giới quốc gia và bảo vệ chủ quyền lãnh thổ Việt Nam' },
+    { code: 'C12', title: 'Chủ quyền biển đảo và chiến lược bảo vệ biển đảo Việt Nam trong tình hình mới' },
+    { code: 'C13', title: 'Một số nội dung cơ bản của Luật Nghĩa vụ quân sự và công tác tuyển quân' },
+    { code: 'C14', title: 'Tổ chức, biên chế, vũ khí và chiến thuật bộ binh, tiểu đội, trung đội' },
+    { code: 'C15', title: 'Kỹ thuật sử dụng một số loại vũ khí, khí tài bộ binh (mô phỏng, thực hành)' }
+  ];
+
+  // Get lesson title by code
+  const getLessonTitle = (code) => {
+    const lesson = lessons.find(l => l.code === code);
+    return lesson ? lesson.title : code;
+  };
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <div className="card max-w-3xl mx-auto">
-        <h2 className="text-2xl font-bold mb-6">Ứng dụng Quiz GDQP-AN</h2>
+      <div className="card max-w-2xl mx-auto">
+        <h2 className="text-2xl font-bold mb-6">Start a Quiz</h2>
         
-        <div className="mb-6 flex border-b border-gray-200 dark:border-gray-700">
-          <button
-            onClick={() => setActiveTab('lessons')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
-              activeTab === 'lessons'
-                ? 'border-primary-light dark:border-primary-dark text-primary-light dark:text-primary-dark'
-                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-            }`}
-          >
-            Chọn bài học
-          </button>
-          <button
-            onClick={() => setActiveTab('settings')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
-              activeTab === 'settings'
-                ? 'border-primary-light dark:border-primary-dark text-primary-light dark:text-primary-dark'
-                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-            }`}
-          >
-            Cài đặt
-          </button>
-        </div>
-        
-        {activeTab === 'lessons' && (
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-3">Chọn bài học:</h3>
-            
-            <div className="grid grid-cols-3 gap-2 mb-4">
-              {groupedLessons.map((lesson) => (
-                <div 
-                  key={lesson}
-                  className={`p-3 rounded-lg cursor-pointer transition-all duration-200 border-2 ${
-                    selectedLessons.includes(lesson)
-                      ? 'border-primary-light dark:border-primary-dark bg-primary-light/10 dark:bg-primary-dark/10'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-primary-light dark:hover:border-primary-dark'
-                  }`}
-                  onClick={() => toggleLesson(lesson)}
-                >
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center">
-                      <div className={`w-6 h-6 flex items-center justify-center rounded-full mr-3 ${
-                        selectedLessons.includes(lesson)
-                          ? 'bg-primary-light dark:bg-primary-dark text-white'
-                          : 'bg-gray-200 dark:bg-gray-700'
-                      }`}>
-                        {selectedLessons.includes(lesson) ? (
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        ) : null}
-                      </div>
-                      <span className="font-medium">Bài {lesson}</span>
-                    </div>
-                  </div>
-                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 pl-9">
-                    {lessonDescriptions[lesson] || lesson}
-                  </p>
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-3">Select Lessons:</h3>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+            {lessons.map((lesson) => (
+              <button
+                key={lesson.code}
+                onClick={() => toggleLesson(lesson.code)}
+                className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl font-medium flex items-center justify-center transition-colors ${
+                  selectedLessons.includes(lesson.code)
+                    ? 'bg-primary-light dark:bg-primary-dark text-white shadow-md'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+                aria-label={`Select lesson ${lesson.code}`}
+              >
+                {lesson.code}
+              </button>
+            ))}
+          </div>
+          
+          {/* Display selected lesson titles */}
+          {selectedLessons.length > 0 && (
+            <div className="mt-4 space-y-2">
+              <h4 className="font-medium text-gray-700 dark:text-gray-300">Selected Lessons:</h4>
+              {selectedLessons.map(lessonCode => (
+                <div key={lessonCode} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm">
+                  <span className="font-semibold">{lessonCode}:</span> {getLessonTitle(lessonCode)}
                 </div>
               ))}
             </div>
-            
-            <div className="flex justify-between mb-2">
-              <button 
-                onClick={() => setSelectedLessons([])}
-                className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-light dark:hover:text-primary-dark"
-              >
-                Bỏ chọn tất cả
-              </button>
-              <button 
-                onClick={() => setSelectedLessons([...groupedLessons])}
-                className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-light dark:hover:text-primary-dark"
-              >
-                Chọn tất cả
-              </button>
-            </div>
-            
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              {selectedLessons.length === 0
-                ? 'Chưa có bài nào được chọn. Vui lòng chọn ít nhất một bài học.'
-                : `Đã chọn ${selectedLessons.length} ${selectedLessons.length === 1 ? 'bài' : 'bài'}.`}
-            </p>
-          </div>
-        )}
+          )}
+          
+          <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">
+            {selectedLessons.length === 0
+              ? 'No lessons selected. All questions will be included.'
+              : `Selected ${selectedLessons.length} ${selectedLessons.length === 1 ? 'lesson' : 'lessons'}.`}
+          </p>
+        </div>
         
-        {activeTab === 'settings' && (
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-3">Số câu hỏi:</h3>
-            <div className="flex flex-wrap gap-2">
-              {[5, 10, 20, 30, 50, 'Tất cả'].map((count) => (
-                <button
-                  key={count}
-                  onClick={() => setQuestionCount(count === 'Tất cả' ? Infinity : count)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    (count === 'Tất cả' && questionCount === Infinity) || count === questionCount
-                      ? 'bg-primary-light dark:bg-primary-dark text-white'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
-                  }`}
-                >
-                  {count}
-                </button>
-              ))}
-            </div>
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-3">Number of Questions:</h3>
+          <div className="flex flex-wrap gap-2">
+            {[5, 10, 20, 50, 'All'].map((count) => (
+              <button
+                key={count}
+                onClick={() => setQuestionCount(count === 'All' ? Infinity : count)}
+                className={`px-4 py-2 rounded-xl font-medium transition-colors ${
+                  (count === 'All' && questionCount === Infinity) || count === questionCount
+                    ? 'bg-primary-light dark:bg-primary-dark text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                }`}
+              >
+                {count}
+              </button>
+            ))}
           </div>
-        )}
+        </div>
         
         <button
           onClick={handleStartQuiz}
           className="btn btn-primary w-full py-3 text-lg"
-          disabled={selectedLessons.length === 0}
         >
-          Bắt đầu Quiz
+          Start Quiz
         </button>
-        
-        {selectedLessons.length === 0 && (
-          <p className="mt-2 text-sm text-red-500 dark:text-red-400">
-            Hãy chọn ít nhất một bài học để bắt đầu.
-          </p>
-        )}
       </div>
     </div>
   );
