@@ -1,9 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ThemeContext } from './ThemeContext';
 
 const Header = () => {
   const { darkMode, toggleDarkMode } = useContext(ThemeContext);
+  const [showInfo, setShowInfo] = useState(false);
 
   return (
     <header className="sticky top-0 z-10 bg-card-light dark:bg-card-dark shadow-md mb-4">
@@ -16,6 +17,17 @@ const Header = () => {
         </Link>
         
         <div className="flex items-center">
+          <button
+            onClick={() => setShowInfo(!showInfo)}
+            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors mr-2"
+            aria-label="Thông tin"
+            title="Thông tin"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+          
           <button
             onClick={toggleDarkMode}
             className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
@@ -34,6 +46,31 @@ const Header = () => {
           </button>
         </div>
       </div>
+      
+      {showInfo && (
+        <div className="container mx-auto px-4 py-3 bg-blue-50 dark:bg-blue-900/30 border-t border-b border-blue-100 dark:border-blue-800 text-sm animate-fade-in">
+          <div className="flex items-start">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <p className="font-medium text-blue-800 dark:text-blue-200">Ứng dụng hỗ trợ ôn tập GDQP-AN</p>
+              <p className="mt-1 text-blue-600 dark:text-blue-300">Hiện có đầy đủ các bài học từ C1 đến C15</p>
+              <ul className="mt-2 text-blue-600 dark:text-blue-300">
+                <li>Chọn bài học bạn muốn ôn tập từ danh sách</li>
+                <li>Chọn số lượng câu hỏi phù hợp</li>
+                <li>Nhấn 'Bắt đầu Quiz' để làm bài</li>
+              </ul>
+              <button 
+                onClick={() => setShowInfo(false)}
+                className="mt-2 text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 underline"
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

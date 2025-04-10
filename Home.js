@@ -2,10 +2,30 @@ import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QuizContext } from './QuizContext';
 
+// Mở rộng thông tin cho tất cả các bài học
+const lessonDescriptions = {
+  'C1': 'Đối tượng và phương pháp nghiên cứu môn học giáo dục QP-AN',
+  'C2': 'Chiến tranh quân đội và bảo vệ tổ quốc',
+  'C3': 'Quản lý nhà nước về quốc phòng an ninh',
+  'C4': 'Lực lượng vũ trang nhân dân Việt Nam',
+  'C5': 'Kết hợp phát triển kinh tế với tăng cường QP-AN',
+  'C6': 'Nghệ thuật quân sự Việt Nam',
+  'C7': 'Biểu tượng quốc gia và truyền thống quân sự',
+  'C8': 'Chiến lược quốc phòng trong thời đại mới',
+  'C9': 'Quân sự chung',
+  'C10': 'Kỹ thuật bắn súng',
+  'C11': 'Chiến thuật cá nhân',
+  'C12': 'Động tác đội ngũ',
+  'C13': 'Đọc bản đồ quân sự',
+  'C14': 'Cấp cứu ban đầu',
+  'C15': 'Kỹ năng quân sự chung'
+};
+
 const Home = () => {
   const {
     availableLessons,
     selectedLessons,
+    setSelectedLessons,
     toggleLesson,
     questionCount,
     setQuestionCount,
@@ -60,19 +80,37 @@ const Home = () => {
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-3">Chọn bài học:</h3>
             
-            <div className="grid grid-cols-5 gap-2 mb-4">
+            <div className="grid grid-cols-3 gap-2 mb-4">
               {groupedLessons.map((lesson) => (
-                <button
+                <div 
                   key={lesson}
-                  onClick={() => toggleLesson(lesson)}
-                  className={`p-3 rounded-lg font-medium transition-colors ${
+                  className={`p-3 rounded-lg cursor-pointer transition-all duration-200 border-2 ${
                     selectedLessons.includes(lesson)
-                      ? 'bg-primary-light dark:bg-primary-dark text-white'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                      ? 'border-primary-light dark:border-primary-dark bg-primary-light/10 dark:bg-primary-dark/10'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-primary-light dark:hover:border-primary-dark'
                   }`}
+                  onClick={() => toggleLesson(lesson)}
                 >
-                  {lesson}
-                </button>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center">
+                      <div className={`w-6 h-6 flex items-center justify-center rounded-full mr-3 ${
+                        selectedLessons.includes(lesson)
+                          ? 'bg-primary-light dark:bg-primary-dark text-white'
+                          : 'bg-gray-200 dark:bg-gray-700'
+                      }`}>
+                        {selectedLessons.includes(lesson) ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : null}
+                      </div>
+                      <span className="font-medium">Bài {lesson}</span>
+                    </div>
+                  </div>
+                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 pl-9">
+                    {lessonDescriptions[lesson] || lesson}
+                  </p>
+                </div>
               ))}
             </div>
             
@@ -93,7 +131,7 @@ const Home = () => {
             
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
               {selectedLessons.length === 0
-                ? 'Chưa có bài nào được chọn. Tất cả câu hỏi sẽ được hiển thị.'
+                ? 'Chưa có bài nào được chọn. Vui lòng chọn ít nhất một bài học.'
                 : `Đã chọn ${selectedLessons.length} ${selectedLessons.length === 1 ? 'bài' : 'bài'}.`}
             </p>
           </div>

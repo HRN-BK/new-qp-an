@@ -43,7 +43,7 @@ export const QuizProvider = ({ children }) => {
     
     setAllQuestions(cleanedQuestions);
     
-    // Extract unique lesson names
+    // Extract unique lesson names from all lessons
     const lessons = [...new Set(cleanedQuestions.map(q => q.lesson))].sort();
     setAvailableLessons(lessons);
     
