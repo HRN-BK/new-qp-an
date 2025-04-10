@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-primary-light dark:bg-primary-dark text-white hover:bg-blue-600 dark:hover:bg-blue-700 hover:shadow-md;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary-light dark:bg-secondary-dark text-white hover:bg-pink-600 dark:hover:bg-pink-700 hover:shadow-md;
+  }
+
+  .card {
+    @apply bg-card-light dark:bg-card-dark rounded-xl shadow-md p-4 md:p-6 transition-all duration-300;
+  }
+
+  .option-card {
+    @apply p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md;
+  }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Make dark mode toggle smoother */
+.dark body {
+  @apply bg-background-dark text-gray-200;
+}
+
+/* Additional hover effects */
+.option-card:hover {
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Make sure SVGs transition colors properly */
+svg {
+  transition: color 0.3s ease-in-out;
+} 
